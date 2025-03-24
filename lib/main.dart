@@ -30,10 +30,26 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+
+  void _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _dobController.text = "\${pickedDate.toLocal()}".split(' ')[0];
+      });
+    }
+  }
 
   void _navigateToWelcomeScreen(BuildContext context, String username) {
     Navigator.push(
@@ -55,6 +71,20 @@ class _SignupPageState extends State<SignupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              TextFormField(
+                controller: _fullNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your full name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(
@@ -86,14 +116,15 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _dobController,
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
-                  labelText: 'Date of Birth',
+                  labelText: 'Phone Number',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your date of birth';
+                    return 'Please enter your phone number';
                   }
                   return null;
                 },
@@ -113,6 +144,25 @@ class _SignupPageState extends State<SignupPage> {
                     return 'Password must be at least 6 characters long';
                   } else if (!RegExp(r'^(?=.*[0-9]).{6,}$').hasMatch(value)) {
                     return 'Password must contain at least one number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _dobController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Date of Birth',
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your date of birth';
                   }
                   return null;
                 },
