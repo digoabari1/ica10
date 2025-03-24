@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,6 +69,8 @@ class _SignupPageState extends State<SignupPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an email';
+                  } else if (!EmailValidator.validate(value)) {
+                    return 'Please enter a valid email address';
                   }
                   return null;
                 },
@@ -97,6 +100,10 @@ class _SignupPageState extends State<SignupPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
+                  } else if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  } else if (!RegExp(r'^(?=.*[0-9]).{6,}$').hasMatch(value)) {
+                    return 'Password must contain at least one number';
                   }
                   return null;
                 },
@@ -106,7 +113,10 @@ class _SignupPageState extends State<SignupPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
+                      const SnackBar(
+                        content: Text('Success'),
+                        backgroundColor: Colors.green,
+                      ),
                     );
                   }
                 },
