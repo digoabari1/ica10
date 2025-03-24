@@ -35,6 +35,15 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  void _navigateToWelcomeScreen(BuildContext context, String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WelcomeScreen(username: username),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,18 +121,31 @@ class _SignupPageState extends State<SignupPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Success'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    _navigateToWelcomeScreen(context, _usernameController.text);
                   }
                 },
                 child: const Text('Sign Up'),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class WelcomeScreen extends StatelessWidget {
+  final String username;
+  const WelcomeScreen({super.key, required this.username});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Welcome')),
+      body: Center(
+        child: Text(
+          'Hello, $username. Welcome to your new account!',
+          style: const TextStyle(fontSize: 20),
         ),
       ),
     );
